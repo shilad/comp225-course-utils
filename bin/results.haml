@@ -1,0 +1,148 @@
+- page_title = "#{team.name} #{title}"
+!!!
+%html
+  %head
+    %meta(charset='utf-8')
+    %title= page_title
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
+    %script(src="https://code.jquery.com/jquery-2.2.3.min.js")
+    :css
+      body {
+        font-family: 'Helvetica Neue';
+      }
+      table {
+        margin-left: 2em;
+      }
+      th, td {
+        padding: 0.5ex 1ex;
+        vertical-align: top;
+      }
+      th {
+        text-align: left;
+        white-space: nowrap;
+        background: #eee;
+      }
+      .rating {
+        display: inline-block;
+        margin: 0 1ex;
+      }
+      .long.response {
+        font-size: 90%;
+        width: 25%;
+      }
+      .rating {
+        padding: 0.5ex 1ex;
+        width: 2em;
+      }
+      .raw {
+        text-align: center;
+      }
+      .delta {
+        text-align: right;
+      }
+      .rating.highlighted {
+        font-weight: bold;
+        color: white;
+        background: black;
+      }
+      .table-label {
+        font-size: 92%;
+        padding: 0.5ex;
+        position: relative;
+      }
+      .table-label.top {
+        left: 9em;
+      }
+      .table-label.side {
+        float: left;
+        transform: rotate(90deg);
+        top: 6ex;
+      }
+      .toolbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        font-size: 120%;
+        background: white;
+        border: 1px solid #888;
+        border-top: none;
+        border-right: none;
+        padding: 0.6em 0.8em;
+      }
+      .toolbar a {
+        font-weight: bold;
+        text-decoration: none;
+        padding: 0 1ex;
+        border-radius: 1ex;
+      }
+      .toolbar a.selected {
+        color: white;
+        background: blue;
+      }
+    :javascript
+      function highlightRatings(type) {  // type can be "raw" or "delta"
+        $('.rating').removeClass('highlighted').removeAttr('style')
+        $('.rating.' + type).addClass('highlighted').each(function(index, elem) {
+          var c = $(elem).data('color-scale'), cabs = Math.abs(c)
+          $(elem).css('background-color', 'hsl('
+            + (60 + 20 * c) + ', '
+            + (Math.min(100, 20 + 100 * cabs)) + '%, '
+            + (80 - Math.min(50, 50 * cabs)) + '%)')
+        })
+        $('.toolbar .highlight-ratings').removeClass('selected')
+        $('.toolbar .highlight-ratings.' + type).addClass('selected')
+      }
+
+      function bindHighlightingButton(type) {
+        $('.toolbar .highlight-ratings.' + type).click(function(e) {
+          e.preventDefault()
+          highlightRatings(type)
+        })
+      }
+
+      $(function() {
+        highlightRatings("raw")
+        bindHighlightingButton("raw")
+        bindHighlightingButton("delta")
+      })
+
+  %body
+    .toolbar
+      Highlight ratings:
+      %a.highlight-ratings.raw{href: '#'} raw
+      %a.highlight-ratings.delta{href: '#'} delta
+    %h1= page_title
+    - questions.each do |question|
+      .question
+        %h2= question.title
+        - if question.is_a?(PerMemberQuestion)
+          .table-label.top  Ratee
+          .table-label.side Rater
+          %table
+            %tr
+              %th
+              - team.members.each do |rated_student|
+                %th.name= rated_student.first_name_last_initial
+            - team.members.each do |student|
+              %tr
+                %th.name= student.first_name_last_initial
+                - team.members.each do |rated_student|
+                  - rating = question.rating(student, rated_student)
+                  - if question.is_a?(MemberScale) && rating
+                    - delta = rating - question.median_rating_from(student)
+                    %td.response
+                      - c = rating - 2.5
+                      .rating.raw{"data-color-scale" => (rating - 2.5)}
+                        = rating
+                      .rating.delta{"data-color-scale" => delta}
+                        = "%+1.1f" % delta
+                  - elsif (rating || '').to_s.length > 12
+                    %td.long.response= rating
+                  - else
+                    %td.response= rating
+        - else
+          %table
+            - team.members.each do |student|
+              %tr
+                %th.name= student.first_name_last_initial
+                %td= question.answer_for(student).to_s.gsub("\n", "<br>")

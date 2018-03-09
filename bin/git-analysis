@@ -1,0 +1,45 @@
+src_paths=$@
+
+if [ -z "$src_paths" ]; then
+  (
+    echo
+    echo "Please pass find args to identify sources files, e.g.:"
+    echo
+    echo "    src -name '*.java'"
+    echo
+  ) >&2
+  exit 1
+fi
+
+function heading {
+  echo
+  echo "–––––––––––– $1 ––––––––––––"
+  echo
+}
+
+function source_files {
+  find $src_paths -type f
+}
+
+
+heading 'Files analyzed'
+
+source_files
+
+
+heading 'git blame line count in final product'
+
+(
+  for f in $(source_files) ; do
+    git blame $f --line-porcelain
+  done
+) | grep author-mail | sort | uniq -c
+
+
+heading "git commit count in $src_path"
+
+git log $src_path | grep Author: | sort | uniq -c
+
+echo
+
+echo "$(git remote get-url origin)/graphs/contributors"
