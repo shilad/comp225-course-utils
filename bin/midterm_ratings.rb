@@ -1,3 +1,5 @@
+#!/usr/bin/env bundle exec ruby
+
 require_relative 'course'
 require_relative 'questionnaire'
 
@@ -19,7 +21,7 @@ course = read_course
 
 puts "#{course.students.count} students"
 
-ratings_file = data_file("Comp 225 Midterm self-assessment 2019 spring (Responses) - Form Responses 1.csv")
+ratings_file = ARGV.shift or abort "ERROR: Please path to csv file"
 CSV.foreach(ratings_file, headers: :first_row) do |row|
   next if row.to_h.values.compact.empty?  # skip blank rows
 

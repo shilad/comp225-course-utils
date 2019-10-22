@@ -9,8 +9,6 @@ Then:
     cd bin
     bundle  # install dependencies
 
-    bundle exec ruby midterm_ratings.rb
+    bundle exec ruby midterm_ratings.rb path_to_spreadsheet_export.csv
 
-    bundle exec ruby final_ratings.rb
-
-You will have to edit the hard-coded filenames (eep!) in those scripts.
+    bundle exec ruby final_ratings.rb path_to_spreadsheet_export.csv

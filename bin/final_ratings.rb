@@ -21,7 +21,7 @@ course = read_course
 
 puts "#{course.students.count} students"
 
-ratings_file = data_file("Comp 225 Team self-assessment 2019.0 (Responses) - Form Responses 1.csv")
+ratings_file = ARGV.shift or abort "ERROR: Please path to csv file"
 missing = Set.new(course.students)
 CSV.foreach(ratings_file, headers: :first_row) do |row|
   student = course.student_with_email(row.fetch("Email Address"))
