@@ -19,7 +19,7 @@ course = read_course
 
 puts "#{course.students.count} students"
 
-ratings_file = data_file("Comp 225 Midterm self-assessment 2017 fall (Responses) - Form Responses 1.csv")
+ratings_file = data_file("Comp 225 Midterm self-assessment 2019 spring (Responses) - Form Responses 1.csv")
 CSV.foreach(ratings_file, headers: :first_row) do |row|
   next if row.to_h.values.compact.empty?  # skip blank rows
 

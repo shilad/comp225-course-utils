@@ -4,9 +4,10 @@ require 'csv'
 require 'set'
 require 'haml'
 
-@bin_dir    = File.dirname(__FILE__)
-@course_dir = File.expand_path(File.join(@bin_dir, '..'))
-@data_dir   = File.join(@course_dir, 'data')
+@bin_dir     = File.dirname(__FILE__)
+@scripts_dir = File.expand_path(File.join(@bin_dir, '..'))
+@course_dir  = File.expand_path(File.join(@scripts_dir, '..'))
+@data_dir    = File.join(@scripts_dir, 'data')
 
 def projects_dir
   File.join(@course_dir, 'Projects')

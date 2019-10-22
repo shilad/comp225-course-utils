@@ -31,14 +31,6 @@ course.teams.each do |team|
     ​
     •••
     ​
-    ## Things to Fix / Improve / Add
-    ​
-    Here’s my list of bugs, usability issues, and suggested improvements for you to consider:
-    ​
-    * •••
-    * •••
-    * •••
-    ​
     ## Final Thoughts
     ​
     •••

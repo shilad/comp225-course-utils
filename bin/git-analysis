@@ -30,11 +30,10 @@ source_files
 heading 'git blame line count in final product'
 
 (
-  for f in $(source_files) ; do
-    git blame $f --line-porcelain
+  source_files | while read f; do
+    git blame "$f" --line-porcelain
   done
 ) | grep author-mail | sort | uniq -c
-
 
 heading "git commit count in $src_path"
 
