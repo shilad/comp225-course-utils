@@ -43,7 +43,7 @@ CSV.foreach(ratings_file, headers: :first_row) do |row|
 end
 
 course.teams.each do |team|
-  outfile = "/tmp/#{team.section} #{team.name}.html"
+  outfile = "/tmp/z/#{team.section} #{team.name}.html"
   render_haml('results', outfile,
     team: team, questions: questions,
     title: "team self-assessment")

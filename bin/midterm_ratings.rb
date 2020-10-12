@@ -15,14 +15,13 @@ questions = [
   OpenAnswer.new("What is your team doing well?"),
   OpenAnswer.new("What would you like your team to do better? (You can talk about specific individuals, or about the group as a whole.)"),
   OpenAnswer.new("Any other comments you’d like to share about the class, your team, or your project?"),
+  OpenAnswer.new("Are you encountering any challenges you want to share when distance learning? Is there any way we can support you?"),
 ]
 
 course = read_course
 
-puts "#{course.students.count} students"
-
 ratings_file = ARGV.shift or abort "ERROR: Please path to csv file"
-CSV.foreach(ratings_file, headers: :first_row) do |row|
+CSV.foreach(ratings_file, headers: :first_row, liberal_parsing: true) do |row|
   next if row.to_h.values.compact.empty?  # skip blank rows
 
   student = course.student_with_email(row.fetch("Email Address"))
@@ -32,11 +31,11 @@ CSV.foreach(ratings_file, headers: :first_row) do |row|
     next if [nil, "no one", "none", "n/a", "null"].include?(name&.downcase)
     student.team.member_named(name)
   end
-  rated_students = teammates + [student]
+  rated_students = [student] + teammates
 
   puts "#{student.first_name} → #{rated_students.compact.map(&:first_name)}"
 
-  cols = row[2..3] + row[7..-1]
+  cols = row[2..3] + row[8..-1]
   questions.each do |question|
     question.read_response(student, rated_students, cols)
   end
